@@ -24,10 +24,13 @@ GET /api/products/12345
 
 ```javascript
 {
+  "id": "12345"
   "name": "Название товара",
   "description": "Описание товара",
   "price": 1000.50,
   "delivery": "21.11.2024"
+  "rating": 4.5,
+  "reviews_count": 120,
   "options": {
     "option1": "value",
     "option2": "value",
