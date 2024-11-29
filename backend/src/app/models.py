@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field, root_validator
-import base64  # Example: Assuming log_data might be base64-encoded
 
 
 class Log(BaseModel):
@@ -127,4 +126,3 @@ class WbAns(BaseModel):
     version: int
     payloadVersion: int
     data: Data
-
