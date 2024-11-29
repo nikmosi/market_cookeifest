@@ -3,6 +3,13 @@ from datetime import date
 from pydantic import BaseModel, HttpUrl
 
 from app.db.models.article import Article, Option
+from app.domain.products.services import (
+    calculate_delivery_date,
+    calculate_price,
+    calculate_rating,
+    calculate_reviews_count,
+    get_image_urls,
+)
 
 
 class Product(BaseModel):
