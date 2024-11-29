@@ -46,7 +46,7 @@ GET /api/products/12345
 
 ### 2. Получение аналогичных товаров
 
-**URL:** `/api/similar-products/{product_id}`  
+**URL:** `/api/products/{product_id}/similar`  
 **Метод:** `GET`  
 **Описание:** Возвращает список идентификаторов товаров, схожих с указанным товаром.
 
@@ -57,7 +57,7 @@ GET /api/products/12345
 #### Пример запроса:
 
 ```http
-GET /api/similar-products/12345
+GET /api/products/12345/similar
 ```
 
 #### Пример ответа:
