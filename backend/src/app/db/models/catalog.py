@@ -20,7 +20,7 @@ class Metadata(BaseModel):
     rmi: str
     rs: int
     title: str
-    search_result: Dict[str, Any]
+    search_result: dict[str, Any]
 
 
 class Price(BaseModel):
@@ -61,7 +61,7 @@ class Product(BaseModel):
     brand: str
     brandId: int
     siteBrandId: int
-    colors: List
+    colors: list
     subjectId: int
     subjectParentId: int
     name: str
@@ -76,18 +76,18 @@ class Product(BaseModel):
     nmReviewRating: float
     feedbacks: int
     nmFeedbacks: int
-    panelPromoId: Optional[int] = None
-    promoTextCard: Optional[str] = None
-    promoTextCat: Optional[str] = None
+    panelPromoId: int | None = None
+    promoTextCard: str | None = None
+    promoTextCat: str | None = None
     volume: int
     viewFlags: int
-    sizes: List[Size]
+    sizes: list[Size]
     totalQuantity: int
-    log: Optional[Log] = None
-    logs: Optional[List[Log]] = None
+    log: Log | None = None
+    logs: list[Log] | None = None
     meta: Meta
-    isNew: Optional[bool] = None
-    feedbackPoints: Optional[int] = None
+    isNew: bool | None = None
+    feedbackPoints: int | None = None
 
     @root_validator(pre=True)
     def ensure_logs_is_list(cls, values):
@@ -117,7 +117,7 @@ class Product(BaseModel):
 
 
 class ProductData(BaseModel):
-    products: List[Product]
+    products: list[Product]
     total: int
 
 
