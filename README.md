@@ -1,4 +1,15 @@
 # market_cookeifest
+# TODO
+из app.domain.products.services реализовать
+- [ ] calculate_delivery_date
+- [ ] calculate_price
+- [ ] calculate_rating
+- [ ] calculate_reviews_count
+- [ ] get_image_urls
+- [ ] sort_products_by_ollama
+- [ ] generate_optimal_query
+- [ ] migrate from sync requests to async aiohttp/httpx
+
 
 # Backend API Documentation
 
