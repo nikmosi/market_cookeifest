@@ -24,23 +24,26 @@ def getProductDelivery(article: str, dest: str):
 
 def getProductDataByArticle(article: str):
     length = len(article)
-    return json.loads(
-        requests.get(
-            f"https://basket-{('0' + article[ : 1]) if (length == 8) else article[ : 2]}.wbbasket.ru/vol{article[ : 3] if (length == 8) else article[ : 5]}/part{article[ : 5] if (length == 8) else article[ : 6]}/{article}/info/ru/card.json"
-        ).text
-    )
+    full_article = "0"*(9 - length) + article
+    print(article, full_article)
+    for i in range(1, 21):
+        req = requests.get(f"https://basket-{('0' + str(i)) if (i < 10) else str(i)}.wbbasket.ru/vol{str(int(full_article[ : 4]))}/part{str(int(full_article[ : 6]))}/{article}/info/ru/card.json").text
+        if (req.find("DOCTYPE") == -1):
+            return json.loads(req)
+    return None
 
 
 def findTitleImageUrlByArticle(article: str):
     length = len(article)
+    full_article = "0"*(9 - length) + article
     for i in range(1, 21):
-        req = requests.get(f"https://basket-{('0' + str(i)) if (i < 10) else str(i)}.wbbasket.ru/vol{article[ : 3] if (length == 8) else article[ : 5]}/part{article[ : 5] if (length == 8) else article[ : 6]}/{article}/images/big/1.webp")
+        req = requests.get(f"https://basket-{('0' + str(i)) if (i < 10) else str(i)}.wbbasket.ru/vol{str(int(full_article[ : 4]))}/part{str(int(full_article[ : 6]))}/{article}/images/big/1.webp")
         if (req.text.find("DOCTYPE") == -1):
             return req.url
     return None
 
 
-def getProductsByQuery__new(query: str):
+def getProductsByQuery_json(query: str):
     return json.loads(
         requests.get(
             f"https://search.wb.ru/exactmatch/ru/common/v7/search?ab_testing=false&appType=1&curr=rub&dest=-366541&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false"
@@ -50,7 +53,7 @@ def getProductsByQuery__new(query: str):
 
 def getProductData(article: str, latitude: str, longitude: str):
     product_data = getProductDataByArticle(article)
-    product_in_search = getProductsByQuery__new("товар " + article)["data"]["products"][0]
+    product_in_search = getProductsByQuery_json("товар " + article)["data"]["products"][0]
     
     geo_data = getGeoData(latitude, longitude)
     dest_i = geo_data["xinfo"].find("dest=") + 5
@@ -72,6 +75,15 @@ def getProductData(article: str, latitude: str, longitude: str):
     ]
 
 
+def getFormatedProductsByQuery(query: str, latitude: str, longitude: str, count: int):
+    products_data = getProductsByQuery_json(query)["data"]["products"][ : count]
+    products = []
+    for product in products_data:
+        print(product)
+        products.append(getProductData(str(product["id"]), latitude, longitude))
+    return products
+
+
 def getProductsByQuery(query: str) -> WbAns:
     return WbAns.model_validate_json(
         requests.get(
@@ -84,8 +96,8 @@ if __name__ == "__main__":
     query = "фен"  # input("text: ")
     art = "48334378"
     #print(getGeoData("55.309228", "82.730587"))
-    print(getProductDelivery(art, "-7165699"))
-    #print(getProductDataByArticle(art))
-    #print(getProductsByQuery("товар " + query))
-    print(getProductData("48334378", "55.309228", "82.730587"))
+    #print(getProductDelivery(art, "-7165699"))
+    print(getProductDataByArticle("3642034"))
+    #print(getFormatedProductsByQuery(query, "55.309228", "82.730587", 10))
+    #print(getProductData("149100663", "55.309228", "82.730587"))
     print("end")
