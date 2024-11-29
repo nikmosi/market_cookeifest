@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from app.models import WbAns
+from app.db.models import Catalog
 
 
 def getProductDataByArticle(article: str):
@@ -14,8 +14,8 @@ def getProductDataByArticle(article: str):
     )
 
 
-def getProductsByQuery(query: str) -> WbAns:
-    return WbAns.model_validate_json(
+def getProductsByQuery(query: str) -> Catalog:
+    return Catalog.model_validate_json(
         requests.get(
             f"https://search.wb.ru/exactmatch/ru/common/v7/search?ab_testing=false&appType=1&curr=rub&dest=-366541&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false"
         ).text

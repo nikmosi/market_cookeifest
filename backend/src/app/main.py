@@ -2,7 +2,7 @@ from typing import Any
 
 from litestar import Litestar, get
 
-from app.models import WbAns
+from app.db.models import Catalog
 from app.parse import getProductDataByArticle, getProductsByQuery
 
 
@@ -12,7 +12,7 @@ async def index() -> str:
 
 
 @get("/catalog/{text:str}")
-async def get_catalog_by_query(text: str) -> WbAns:
+async def get_catalog_by_query(text: str) -> Catalog:
     return getProductsByQuery(text)
 
 
