@@ -40,16 +40,9 @@ class Data(BaseModel):
     tech_size: str
 
 
-class OptionData(BaseModel):
-    name: str
-    value: str
-    charc_type: int
-    is_variable: bool | None = None
-
-
 class GroupedOption(BaseModel):
     group_name: str
-    options: list[OptionData]
+    options: list[Option]
 
 
 class Article(BaseModel):
