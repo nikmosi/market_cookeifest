@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field, root_validator
 
 
@@ -115,14 +116,14 @@ class Product(BaseModel):
         return values
 
 
-class Data(BaseModel):
+class ProductData(BaseModel):
     products: List[Product]
     total: int
 
 
-class WbAns(BaseModel):
+class Catalog(BaseModel):
     metadata: Metadata
     state: int
     version: int
     payloadVersion: int
-    data: Data
+    data: ProductData
