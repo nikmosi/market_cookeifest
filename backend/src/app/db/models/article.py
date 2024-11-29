@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Optional
-
 from pydantic import BaseModel
 
 
@@ -9,7 +7,7 @@ class Option(BaseModel):
     name: str
     value: str
     charc_type: int
-    is_variable: Optional[bool] = None
+    is_variable: bool | None = None
 
 
 class Composition(BaseModel):
@@ -38,20 +36,13 @@ class Media(BaseModel):
 class Data(BaseModel):
     subject_id: int
     subject_root_id: int
-    chrt_ids: List[int]
+    chrt_ids: list[int]
     tech_size: str
-
-
-class Option1(BaseModel):
-    name: str
-    value: str
-    charc_type: int
-    is_variable: Optional[bool] = None
 
 
 class GroupedOption(BaseModel):
     group_name: str
-    options: List[Option1]
+    options: list[Option]
 
 
 class Article(BaseModel):
@@ -63,13 +54,13 @@ class Article(BaseModel):
     subj_root_name: str
     vendor_code: str
     description: str
-    options: List[Option]
-    compositions: List[Composition]
+    options: list[Option]
+    compositions: list[Composition]
     certificate: Certificate
-    colors: List[int]
+    colors: list[int]
     contents: str
-    full_colors: List[FullColor]
+    full_colors: list[FullColor]
     selling: Selling
     media: Media
     data: Data
-    grouped_options: List[GroupedOption]
+    grouped_options: list[GroupedOption]

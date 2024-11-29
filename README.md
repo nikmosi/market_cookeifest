@@ -1,4 +1,15 @@
 # market_cookeifest
+# TODO
+из app.domain.products.services реализовать
+- [ ] calculate_delivery_date
+- [ ] calculate_price
+- [ ] calculate_rating
+- [ ] calculate_reviews_count
+- [ ] get_image_urls
+- [ ] sort_products_by_ollama
+- [ ] generate_optimal_query
+- [ ] migrate from sync requests to async aiohttp/httpx
+
 
 # Backend API Documentation
 
@@ -46,7 +57,7 @@ GET /api/products/12345
 
 ### 2. Получение аналогичных товаров
 
-**URL:** `/api/similar-products/{product_id}`  
+**URL:** `/api/products/{product_id}/similar`  
 **Метод:** `GET`  
 **Описание:** Возвращает список идентификаторов товаров, схожих с указанным товаром.
 
@@ -57,7 +68,7 @@ GET /api/products/12345
 #### Пример запроса:
 
 ```http
-GET /api/similar-products/12345
+GET /api/products/12345/similar
 ```
 
 #### Пример ответа:
