@@ -145,8 +145,8 @@ def getProductData(article: str, latitude: str, longitude: str):
                     for option in product_data["options"]
                 ]
             ),
-        },
-        {"images": [data[3]]},
+            "images": [data[3]],
+        }
     ]
 
 

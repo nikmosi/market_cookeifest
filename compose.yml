@@ -50,6 +50,9 @@ services:
     hostname: app
     ports:
       - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://37.192.128.147:11434/
+      - OLLAMA_MODEL=llama3.1
     networks:
       - redis-network
       - backbone
