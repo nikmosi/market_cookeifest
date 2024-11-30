@@ -13,9 +13,7 @@ def product_validation(productInfo):
     print(model)
     response = client.chat(
         model=model,
-        messages=[
-            {"role": "user", "content": "hi water?"},
-        ],
+        messages=[{'role': 'system', 'content': search_query_prompt}, {'role': 'user', 'content': msg}],
     )
     return response["message"]["content"]
 
