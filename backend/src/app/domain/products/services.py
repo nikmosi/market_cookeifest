@@ -1,6 +1,8 @@
 from datetime import date
+from typing import Any
 
 import requests
+import json
 from pydantic import HttpUrl
 
 from app.db.models import Article, Catalog
@@ -25,8 +27,8 @@ def get_products_by_query(query: str) -> Catalog:
     )
 
 
-def generate_optimal_query(article: Article) -> str:
-    return product_validation(article.model_dump_json())
+def generate_optimal_query(article: Any) -> str:
+    return product_validation(str(article))
 
 
 def sort_products_by_ollama(products: list[Product]) -> list[int]:
