@@ -2,10 +2,11 @@ FROM python:3.12-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy the project into the image
-ADD . /app
+COPY pyproject.toml uv.lock README.md /app/
 
 # Sync the project into a new environment, using the frozen lockfile
 WORKDIR /app
 ENV PYTHONPATH "/app/src"
 RUN uv sync --frozen
-RUN uv run litestar --app app.main:app run --debug
+ADD src /app/src
+CMD uv run litestar --app app.main:app run --host "0.0.0.0"
