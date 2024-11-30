@@ -1,0 +1,69 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    environment:
+      OLLAMA_KEEP_ALIVE: -1
+    volumes:
+      - ./ollama:/root/.ollama
+    restart: always
+    networks:
+      - app-network
+      - backbone
+
+  web:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf.d:/etc/nginx/conf.d/
+    networks:
+      - backbone
+  redis:
+    image: redis:latest
+    container_name: llm_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/root/redis
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - REDIS_PASSWORD=password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=0
+    networks:
+      - redis-network
+  app:
+    build: ./backend
+    restart: unless-stopped
+    container_name: app
+    hostname: app
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=ollama:11434
+      - OLLAMA_MODEL=llama3.1
+    networks:
+      - redis-network
+      - backbone
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis_data:
+  ollama:
+
+networks:
+  app-network:
+  backbone:
+    driver: bridge
+  redis-network:
