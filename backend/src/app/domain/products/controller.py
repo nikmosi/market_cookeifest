@@ -1,7 +1,7 @@
 from litestar import Controller, Request, get
 from typing import Any
 
-#from app.parse import getGeoData, getProductData
+# from app.parse import getGeoData, getProductData
 from app.parse import getProductData, getProductsArticlesByQuery
 import requests
 from app.domain.products import urls
@@ -25,7 +25,6 @@ class ProductsController(Controller):
         response = requests.get(
             f"https://geolocation-db.com/json/{ip}&position=true"
         ).json()
-        return response
         return getProductData(
             product_article, response["latitude"], response["longitude"]
         )
@@ -40,5 +39,5 @@ class ProductsController(Controller):
             product_article, response["latitude"], response["longitude"]
         )
         query = generate_optimal_query(product)
-        articles = sort_products_by_ollama(getProductsArticlesByQuery(query))
+        articles = getProductsArticlesByQuery(query)
         return SimilarProducts(articles=articles)
