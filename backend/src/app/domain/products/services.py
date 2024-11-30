@@ -5,6 +5,7 @@ from pydantic import HttpUrl
 
 from app.db.models import Article, Catalog
 from app.db.models.catalog import Product
+from app.ollama.requests import product_validation
 
 
 def get_product_data_by_article(article: str) -> Article:
@@ -25,7 +26,7 @@ def get_products_by_query(query: str) -> Catalog:
 
 
 def generate_optimal_query(article: Article) -> str:
-    return article.imt_name
+    return product_validation(article.model_dump_json())
 
 
 def sort_products_by_ollama(products: list[Product]) -> list[int]:
