@@ -15,6 +15,7 @@ def product_validation(productInfo):
 Описание: {item['description']}
 Опции: {', '.join([f"{key}: {value}" for key, value in item['options'].items()])}
 """
+    print(f"{result=}")
     print(model)
     response = client.chat(
         model=model,
