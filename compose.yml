@@ -23,8 +23,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf.d:/etc/nginx/conf.d/
-    networks:
-      - backbone
+    network_mode: "host"
   redis:
     image: redis:latest
     container_name: llm_redis

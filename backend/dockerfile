@@ -9,4 +9,4 @@ WORKDIR /app
 ENV PYTHONPATH "/app/src"
 RUN uv sync --frozen
 ADD src /app/src
-CMD uv run litestar --app app.main:app run --host "0.0.0.0"
+CMD uv run litestar --app app.main:app run --debug --host "0.0.0.0"

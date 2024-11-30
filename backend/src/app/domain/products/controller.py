@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from litestar import Controller, Request, get
 from typing import Any
 
@@ -21,17 +22,26 @@ class ProductsController(Controller):
     async def get_product_by_article(
         self, product_article: str, request: Request
     ) -> Any:
-        ip = request.scope.get("client", ["Unknown"])[0]
+        ip = request.headers.get("x-forwarded-for").split(",")[0]
+        print(ip)
         response = requests.get(
             f"https://geolocation-db.com/json/{ip}&position=true"
         ).json()
-        return getProductData(
+        if response["latitude"] == "Not found":
+            response = requests.get(
+                f"https://geolocation-db.com/json/37.192.128.147&position=true"
+            ).json()
+        product = getProductData(
             product_article, response["latitude"], response["longitude"]
         )
+        print(product)
+
+        return product
 
     @get(path=urls.SIMILAR_PRODUCT, name="product:similar", cache=360)
     async def get_similar_products(self, request: Request, product_article: str) -> Any:
-        ip = request.scope.get("client", ["Unknown"])[0]
+        ip = request.headers.get("x-forwarded-for").split(",")[0]
+        print(ip)
         response = requests.get(
             f"https://geolocation-db.com/json/{ip}&position=true"
         ).json()
