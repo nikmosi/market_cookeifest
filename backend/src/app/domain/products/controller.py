@@ -17,7 +17,7 @@ from app.domain.products.services import (
 class ProductsController(Controller):
     tags = ["Products"]
 
-    @get(path=urls.PRODUCT_ID, name="product:get_by_article")
+    @get(path=urls.PRODUCT_ID, name="product:get_by_article", cache=360)
     async def get_product_by_article(
         self, product_article: str, request: Request
     ) -> Any:
@@ -29,7 +29,7 @@ class ProductsController(Controller):
             product_article, response["latitude"], response["longitude"]
         )
 
-    @get(path=urls.SIMILAR_PRODUCT, name="product:similar")
+    @get(path=urls.SIMILAR_PRODUCT, name="product:similar", cache=360)
     async def get_similar_products(self, request: Request, product_article: str) -> Any:
         ip = request.scope.get("client", ["Unknown"])[0]
         response = requests.get(
