@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 import threading
 
-from models import WbAns
+from app.models import WbAns
 
 
 def setValueInList(l, i, v):
@@ -110,8 +110,8 @@ def getProductData(article: str, latitude: str, longitude: str):
     ]
 
 
-def getFormatedProductsByQuery(query: str, latitude: str, longitude: str, count: int):
-    products_data = getProductsByQuery_json(query)["data"]["products"]
+def getFormatedProductsByQuery(query: str, latitude: str, longitude: str, max_count: int):
+    products_data = getProductsByQuery_json(query)["data"]["products"][ : max_count]
     products = []
     threads_count = os.cpu_count()
     steps = [threads_count for i in range(len(products_data)//threads_count)]
@@ -121,8 +121,8 @@ def getFormatedProductsByQuery(query: str, latitude: str, longitude: str, count:
     return products
 
 
-def getProductsArticlesByQuery(query: str, latitude: str, longitude: str, count: int):
-    products_data = getProductsByQuery_json(query)["data"]["products"]
+def getProductsArticlesByQuery(query: str, latitude: str, longitude: str, max_count: int):
+    products_data = getProductsByQuery_json(query)["data"]["products"][ : max_count]
     return [product["id"] for product in products_data]
 
 
