@@ -5,8 +5,6 @@ from datetime import datetime
 import os
 import threading
 
-from app.models import WbAns
-
 
 def setValueInList(l, i, v):
     l[i] = v
@@ -126,14 +124,6 @@ def getProductsArticlesByQuery(query: str, latitude: str, longitude: str, max_co
     return [product["id"] for product in products_data]
 
 
-def getProductsByQuery(query: str) -> WbAns:
-    return WbAns.model_validate_json(
-        requests.get(
-            f"https://search.wb.ru/exactmatch/ru/common/v7/search?ab_testing=false&appType=1&curr=rub&dest=-366541&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false"
-        ).text
-    )
-
-
 if __name__ == "__main__":
     print("start")
     query = "фен"  # input("text: ")
@@ -144,7 +134,7 @@ if __name__ == "__main__":
     #print(type(getProductDataByArticle__old("149100663")))
     #print(getFormatedProductsByQuery(query, "55.309228", "82.730587", 10))
     #print(getFormatedProductsByQueryTh(query, "55.309228", "82.730587"))
-    #print(getProductData("149100663", "55.309228", "82.730587"))
+    print(getProductData("48334378", "55.309228", "82.730587"))
     
     curr_time = time.time()
     #print(getFormatedProductsByQuery(query, "55.309228", "82.730587", 20))
