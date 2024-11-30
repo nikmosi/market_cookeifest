@@ -39,5 +39,5 @@ class ProductsController(Controller):
             product_article, response["latitude"], response["longitude"]
         )
         query = generate_optimal_query(product)
-        articles = getProductsArticlesByQuery(query)
+        articles = getProductsArticlesByQuery(query, max_count=20)
         return SimilarProducts(articles=articles)
