@@ -1,8 +1,8 @@
 import React from "react";
-import styles from "./ProductCard.module.css";
+import styles from "./ListProductCard.module.css";
 import { Link } from "react-router-dom";
 
-export const ProductCard = ({
+const ListProductCard = ({
 	id,
 	name,
 	description,
@@ -32,9 +32,6 @@ export const ProductCard = ({
 					</h2>
 
 					{/* Описание товара */}
-					<p className={styles.productDescription}>
-						{description || "Описание отсутствует"}
-					</p>
 
 					{/* Детали товара */}
 					<div className={styles.productDetails}>
@@ -70,3 +67,5 @@ export const ProductCard = ({
 		</>
 	);
 };
+
+export default ListProductCard;

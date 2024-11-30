@@ -1,8 +1,31 @@
 import React from "react";
 import styles from "./SearchBar.module.css";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import extractId from "../controllers/extractId";
+import { addProductId } from "../API/localStorageUtils";
 
 export const SearchBar = () => {
+	const [searchLink, setSearchLink] = React.useState("");
+	const navigate = useNavigate();
+
+	const onButtonClick = () => {
+		const article = extractId(searchLink);
+		if (article) {
+			// Добавляем ID в localStorage
+			addProductId(article);
+
+			// Проверяем, был ли ID сохранен
+			const storedIds = JSON.parse(localStorage.getItem("productIds")) || [];
+			if (storedIds.includes(article)) {
+				navigate("/resault"); // Перенаправление на другую страницу
+			} else {
+				alert("Не удалось сохранить ID. Попробуйте еще раз.");
+			}
+		} else {
+			alert("Некорректная ссылка. Проверьте URL.");
+		}
+	};
+
 	return (
 		<form
 			className={styles.searchContainer}
@@ -16,12 +39,15 @@ export const SearchBar = () => {
 				type="text"
 				className={styles.searchInput}
 				placeholder="введите ссылку"
+				onChange={(e) => setSearchLink(e.target.value)}
 			/>
-			<Link to="/resault">
-				<button type="submit" className={styles.searchButton}>
-					найти
-				</button>
-			</Link>
+			<button
+				type="submit"
+				className={styles.searchButton}
+				onClick={onButtonClick}
+			>
+				найти
+			</button>
 		</form>
 	);
 };

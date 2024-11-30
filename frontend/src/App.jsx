@@ -8,9 +8,9 @@ import SecondProductSearch from "./secondPage/SecondProductSearch.jsx";
 function App() {
 	const [count, setCount] = useState(0);
 
-	useEffect(() => {
-		console.log(import.meta.env.VITE_APP_HOST)
-	  }, [])
+	// useEffect(() => {
+	// 	console.log(import.meta.env.VITE_APP_HOST)
+	//   }, [])
 
 	return (
 		<>

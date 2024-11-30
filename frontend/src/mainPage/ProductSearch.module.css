@@ -16,11 +16,17 @@
   }
   
   .productsSection {
-    background-color: rgb(219, 219, 219);
     margin-top: 8vh;
     padding: 4vh 3vw;
     overflow: hidden;
-    width: 80vw;
+    
+  }
+  .productGrid {
+    display: grid;
+    margin-top: 10vh;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    
   }
   
   @media (max-width: 991px) {
