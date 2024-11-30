@@ -9,6 +9,7 @@ model = os.getenv("OLLAMA_MODEL", "llama3.1")
 
 def product_validation(productInfo):
     item = productInfo[0]
+    print(f"{item}")
     result = f"""
 Название: {item['name']}
 Описание: {item['description']}
@@ -25,6 +26,7 @@ def product_validation(productInfo):
 
     print(response["message"]["content"])
     return response["message"]["content"]
+
 
 def search_alternative(productInfo, alternativeProductInfo):
     response = client.chat(
