@@ -27,6 +27,8 @@ def multithreadExec(funcs: list):
 
 
 def getGeoData(latitude: str, longitude: str):
+    print(latitude)
+    print(longitude)
     return json.loads(
         requests.get(
             f"https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&latitude={latitude}&longitude={longitude}&locale=ru"

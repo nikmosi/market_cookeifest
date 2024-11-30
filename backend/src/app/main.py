@@ -10,9 +10,9 @@ async def index() -> str:
     return "Hello, world!"
 
 
-@get("/ip")
+@get("/api/ip")
 async def get_ip(request: Request) -> str:
-    client_ip = request.scope.get("client", ["Unknown"])
+    client_ip = request.client.host
     return f"Your IP address is: {client_ip}"
 
 
