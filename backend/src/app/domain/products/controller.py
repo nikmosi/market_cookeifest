@@ -28,6 +28,7 @@ class ProductsController(Controller):
             f"https://geolocation-db.com/json/{ip}&position=true"
         ).json()
         if response["latitude"] == "Not found":
+            print("can't get ip from user ip get from novosibirk")
             response = requests.get(
                 f"https://geolocation-db.com/json/37.192.128.147&position=true"
             ).json()
