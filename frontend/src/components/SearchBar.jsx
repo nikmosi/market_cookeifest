@@ -3,53 +3,60 @@ import styles from "./SearchBar.module.css";
 import { useNavigate } from "react-router-dom";
 import extractId from "../controllers/extractId";
 import { addProductId } from "../API/localStorageUtils";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const SearchBar = () => {
-	const [searchLink, setSearchLink] = React.useState("");
-	const navigate = useNavigate();
+  const [searchLink, setSearchLink] = React.useState("");
+  const navigate = useNavigate();
 
-	const onButtonClick = () => {
-		const article = extractId(searchLink);
-		if (article) {
-			// Добавляем ID в localStorage
-			addProductId(article);
+  const onButtonClick = () => {
+    const article = extractId(searchLink);
+    if (article) {
+      addProductId(article);
 
-			// Проверяем, был ли ID сохранен
-			const storedIds = JSON.parse(localStorage.getItem("productIds")) || [];
-			if (storedIds.includes(article)) {
-				navigate("/resault"); // Перенаправление на другую страницу
-			} else {
-				alert("Не удалось сохранить ID. Попробуйте еще раз.");
-			}
-		} else {
-			alert("Некорректная ссылка. Проверьте URL.");
-		}
-	};
+      const storedIds = JSON.parse(localStorage.getItem("productIds")) || [];
+      if (storedIds.includes(article)) {
+        navigate("/resault");
+      } else {
+        toast.error("Не удалось сохранить ID. Попробуйте еще раз.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } else {
+      toast.error("Некорректная ссылка. Проверьте URL.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
 
-	return (
-		<form
-			className={styles.searchContainer}
-			onSubmit={(e) => e.preventDefault()}
-		>
-			<label htmlFor="searchInput" className={styles.visuallyHidden}>
-				введите ссылку
-			</label>
-			<input
-				id="searchInput"
-				type="text"
-				className={styles.searchInput}
-				placeholder="введите ссылку"
-				onChange={(e) => setSearchLink(e.target.value)}
-			/>
-			<button
-				type="submit"
-				className={styles.searchButton}
-				onClick={onButtonClick}
-			>
-				найти
-			</button>
-		</form>
-	);
+  return (
+    <form className={styles.searchContainer} onSubmit={(e) => e.preventDefault()}>
+      <label htmlFor="searchInput" className={styles.visuallyHidden}>
+        введите ссылку
+      </label>
+      <input
+        id="searchInput"
+        type="text"
+        className={styles.searchInput}
+        placeholder="введите ссылку"
+        onChange={(e) => setSearchLink(e.target.value)}
+      />
+      <button type="submit" className={styles.searchButton} onClick={onButtonClick}>
+        найти
+      </button>
+    </form>
+  );
 };
 
 // export default function BookingsList({ onComponentSelect }) {

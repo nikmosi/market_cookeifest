@@ -6,65 +6,104 @@ import ListProductCard from "../components/ListProductCard";
 import { ProductCard } from "../components/ProductCard";
 import { getLastProductId } from "../API/localStorageUtils";
 import { fetchProducts, fetchArticles } from "../API/api";
+import ContentLoader from "react-content-loader";
+import { ClipLoader } from "react-spinners";
+import Select from "react-select";
 
 const SecondProductSearch = () => {
-	const [products, setProducts] = useState(null);
-	const [currentProduct, setCurrentProduct] = useState([]);
+  const [products, setProducts] = useState(null);
+  const [currentProduct, setCurrentProduct] = useState([]);
+  const [loadingStatus, setLoadingStatus] = useState(true);
+  const [loadingStatusBasicProduct, setLoadingStatusBasicProduct] = useState(true);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const lastProduct = getLastProductId();
-			if (lastProduct) {
-				const fetchedData = await fetchProducts(lastProduct);
-				setProducts(fetchedData[0]);
-				console.log("Fetched data:", fetchedData);
-			}
-		};
-		const fetchArtic = async () => {
-			const articles = getLastProductId();
-			if (articles) {
-				const fetchedData = await fetchArticles(articles);
-				for (let temp of fetchedData.articles.slice(0, 3)) {
-					const pop = await fetchProducts(temp);
-					setCurrentProduct((prevProducts) => [...prevProducts, pop[0]]);
-				}
+  useEffect(() => {
+    const fetchData = async () => {
+      const lastProduct = getLastProductId();
+      if (lastProduct) {
+        const fetchedData = await fetchProducts(lastProduct);
+        setProducts(fetchedData[0]);
+        setLoadingStatusBasicProduct(false);
+      }
+    };
+    const fetchArtic = async () => {
+      const articles = getLastProductId();
+      if (articles) {
+        const fetchedData = await fetchArticles(articles);
+        for (let temp of fetchedData.articles.slice(0, 9)) {
+          const pop = await fetchProducts(temp);
+          setCurrentProduct((prevProducts) => [...prevProducts, pop[0]]);
+        }
 
-				console.log(" data:", currentProduct);
-			}
-		};
-		fetchData();
-		fetchArtic();
-	}, []);
+        console.log(" data:", currentProduct);
+        setLoadingStatus(false);
+      }
+    };
+    fetchData();
+    fetchArtic();
+  }, []);
 
-	const grid = (
-		<div className={styles.productGrid}>
-			{currentProduct.map((currentProduct, index) => (
-				<ListProductCard key={index} {...currentProduct} />
-			))}
-		</div>
-	);
-	return (
-		<main className={styles.container}>
-			<div className={styles.header}>
-				<Link to="/" className={styles.backButton}>
-					<button>НА ГЛАВНУЮ </button>
-				</Link>
-				<h2 className={styles.pageTitle}>Ваш товар</h2>
-			</div>
+  const Skeleton = () => (
+    <ContentLoader
+      speed={2}
+      width={1780}
+      height={500}
+      viewBox="0 0 1780 500"
+      backgroundColor="#d3d3d3"
+      foregroundColor="#e0e0e0"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <rect x="0" y="0" rx="5" ry="5" width="1780" height="500" />
+    </ContentLoader>
+  );
 
-			<div className={styles.productCardContainer}>
-				<ProductCard {...products} />
-			</div>
+  const grid = (
+    <div className={styles.productGrid}>
+      {currentProduct.map((currentProduct, index) => (
+        <ListProductCard key={index} {...currentProduct} />
+      ))}
+    </div>
+  );
 
-			<section className={styles.productsSection}>
-				<div className={styles.sort}>
-					<span className={styles.analog}>Аналогичные товары</span>
-					<button>Сортировать</button>
-				</div>
-				{currentProduct && currentProduct.length > 0 ? grid : <p>Поиск...</p>}
-			</section>
-		</main>
-	);
+  const options = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
+
+  const buttonSort = (
+    <div className={styles.buttonSortConteiner}>
+      <span className={styles.buttonSortSpan}>Сортировка</span>
+      <Select options={options} defaultValue={null} />
+    </div>
+  );
+
+  return (
+    <main className={styles.container}>
+      <div className={styles.header}>
+        <Link to="/" className={styles.backButton}>
+          <button>НА ГЛАВНУЮ </button>
+        </Link>
+        <h2 className={styles.pageTitle}>Выбранный товар</h2>
+      </div>
+      {loadingStatusBasicProduct ? (
+        <div className={styles.skeletonWrapper}>
+          <Skeleton />
+        </div>
+      ) : (
+        <div className={styles.productCardContainer}>
+          <ProductCard {...products} />
+        </div>
+      )}
+
+      <section className={styles.productsSection}>
+        <div className={styles.sort}>
+          <span className={styles.analog}>Аналогичные товары</span>
+          {loadingStatus ? <ClipLoader size={60} color={"#86C232"} /> : buttonSort}
+        </div>
+        {currentProduct && currentProduct.length > 0 ? grid : <p>Поиск...</p>}
+      </section>
+    </main>
+  );
 };
 
 export default SecondProductSearch;

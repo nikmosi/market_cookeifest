@@ -7,17 +7,18 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #242424;
 }
 
 body {
   margin: 0;
   padding: 0;
   color: black;
+  background-color: #242424;
 }
 a {
   font-weight: 500;
@@ -28,12 +29,10 @@ a:hover {
   color: #535bf2;
 }
 
-
-
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  font-family: 'Stalinist One';
+  font-family: "Stalinist One";
   text-align: center;
 }
 
@@ -70,15 +69,14 @@ button:focus-visible {
 }
 
 @font-face {
-  font-family: 'Stalinist One';
+  font-family: "Stalinist One";
   src: url(public/StalinistOne-Regular.ttf);
 }
 @font-face {
-  font-family: 'Sansation';
+  font-family: "Sansation";
   src: url(public/Sansation/Sansation-Regular.ttf);
 }
 @font-face {
-  font-family: 'Sansation-lite';
+  font-family: "Sansation-lite";
   src: url(public/Sansation/Sansation-Light.ttf);
 }
-

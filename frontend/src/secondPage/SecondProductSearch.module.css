@@ -55,25 +55,25 @@
 
 /* Прочие стили */
 .sort {
-  display: flex;
-  flex-direction: row;
-  padding: 20px;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; /* Используем Flexbox */
+  justify-content: space-between; /* Выравнивание элементов по горизонтали */
+  align-items: center; /* Выравнивание элементов по вертикали */
+  width: 100%; /* Устанавливаем ширину контейнера */
 }
 
 .analog {
   font-size: 3em;
   color: white;
+  text-align: center;
 }
 
 button {
   background-color: rgb(134, 194, 50);
-    padding: 1vh 4vw;
-    letter-spacing: 3px;
-    border-radius: 7px;
-    cursor: pointer;
-    color: rgb(34, 38, 41);
+  padding: 1vh 4vw;
+  letter-spacing: 3px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: rgb(34, 38, 41);
 }
 
 button:hover {
@@ -84,9 +84,7 @@ button:hover {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  
 }
-
 
 @media (max-width: 991px) {
   .productGrid {
@@ -94,9 +92,6 @@ button:hover {
     gap: 40px;
   }
 }
-
-
-
 
 /* Мобильные стили */
 @media (max-width: 991px) {
@@ -118,4 +113,44 @@ button:hover {
     padding: 0 20px;
     max-width: 100%;
   }
+}
+
+.skeletonWrapper {
+  margin-top: 30px;
+}
+
+.buttonSortConteiner {
+  display: flex; /* Для размещения элементов по горизонтали */
+  align-items: center; /* Выравнивание по вертикали */
+  justify-content: space-between; /* Расстояние между элементами */
+  padding: 10px 20px; /* Внутренние отступы для контейнера */
+  background-color: #f5f5f5; /* Цвет фона */
+  border-radius: 8px; /* Скругление углов */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень */
+  width: 200px; /* Ширина контейнера */
+  margin: 10px 0; /* Отступы сверху и снизу */
+}
+
+.buttonSortSpan {
+  font-size: 16px; /* Размер шрифта для текста */
+  font-weight: 600; /* Полужирный шрифт */
+  color: #333; /* Цвет текста */
+  margin-right: 10px; /* Отступ справа для отделения от Select */
+}
+
+.Select {
+  width: 200px; /* Ширина селектора */
+  font-size: 14px; /* Размер шрифта */
+  border: 1px solid #ccc; /* Граница вокруг селектора */
+  border-radius: 4px; /* Скругленные углы */
+  padding: 5px 10px; /* Внутренние отступы */
+  background-color: white; /* Белый фон для поля */
+  cursor: pointer; /* Курсор в виде руки при наведении */
+  transition: border 0.3s ease; /* Плавный переход для изменения границы */
+}
+
+/* Эффект при фокусировке на поле select */
+.Select:focus {
+  border-color: #007bff; /* Синий цвет границы при фокусе */
+  outline: none; /* Убираем стандартное обведение */
 }
