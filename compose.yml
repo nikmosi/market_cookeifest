@@ -7,7 +7,7 @@ services:
     environment:
       OLLAMA_KEEP_ALIVE: -1
     volumes:
-      - ./ollama:/root/.ollama
+      - ollama:/root/.ollama
     restart: always
     networks:
       - app-network
@@ -25,6 +25,25 @@ services:
       - ./nginx.conf.d:/etc/nginx/conf.d/
     networks:
       - backbone
+  redis:
+    image: redis:latest
+    container_name: ai_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/root/redis
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - REDIS_PASSWORD=password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=0
+    networks:
+      - redis-network
   app:
     build: ./backend
     context: ./backend
@@ -35,8 +54,16 @@ services:
       - "8000:8000"
     networks:
       - backbone
+    depends_on:
+      redis:
+        condition: service_healthy
 
+volumes:
+  redis_data:
+  ollama:
+    
 networks:
   app-network:
   backbone:
     driver: bridge
+  redis-network:
