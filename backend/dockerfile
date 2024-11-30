@@ -6,5 +6,6 @@ ADD . /app
 
 # Sync the project into a new environment, using the frozen lockfile
 WORKDIR /app
+ENV PYTHONPATH "/app/src"
 RUN uv sync --frozen
 RUN uv run litestar --app app.main:app run --debug

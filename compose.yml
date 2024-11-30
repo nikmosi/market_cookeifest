@@ -46,7 +46,6 @@ services:
       - redis-network
   app:
     build: ./backend
-    context: ./backend
     restart: unless-stopped
     container_name: app
     hostname: app
