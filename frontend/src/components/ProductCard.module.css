@@ -42,8 +42,10 @@
   color: #555;
 }
 
-.productDetails {
-  margin-top: 16px;
+.productDetails p {
+  margin-top: 0px;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 18px;
 }
 
 .priceDelivery {
