@@ -8,18 +8,23 @@ model = os.getenv("OLLAMA_MODEL", "llama3.1")
 
 
 def product_validation(productInfo):
-    return "шорты"
-    msg = json.dumps(json.dumps(productInfo))
+    item = productInfo[0]
+    result = f"""
+Название: {item['name']}
+Описание: {item['description']}
+Опции: {', '.join([f"{key}: {value}" for key, value in item['options'].items()])}
+"""
     print(model)
     response = client.chat(
         model=model,
         messages=[
             {"role": "system", "content": search_query_prompt},
-            {"role": "user", "content": msg},
+            {"role": "user", "content": result},
         ],
     )
-    return response["message"]["content"]
 
+    print(response["message"]["content"])
+    return response["message"]["content"]
 
 def search_alternative(productInfo, alternativeProductInfo):
     response = client.chat(
