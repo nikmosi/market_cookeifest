@@ -1,10 +1,9 @@
 from json import JSONDecodeError
-from litestar import Controller, Request, get
 from typing import Any
 
-# from app.parse import getGeoData, getProductData
-from app.parse import getProductData, getProductsArticlesByQuery
 import requests
+from litestar import Controller, Request, get
+
 from app.domain.products import urls
 from app.domain.products.schemas import SimilarProducts
 from app.domain.products.services import (
@@ -13,6 +12,9 @@ from app.domain.products.services import (
     get_products_by_query,
     sort_products_by_ollama,
 )
+
+# from app.parse import getGeoData, getProductData
+from app.parse import getProductData, getProductsArticlesByQuery
 
 
 class ProductsController(Controller):
@@ -46,6 +48,11 @@ class ProductsController(Controller):
         response = requests.get(
             f"https://geolocation-db.com/json/{ip}&position=true"
         ).json()
+        if response["latitude"] == "Not found":
+            print("can't get ip from user ip get from novosibirk")
+            response = requests.get(
+                f"https://geolocation-db.com/json/37.192.128.147&position=true"
+            ).json()
         product = getProductData(
             product_article, response["latitude"], response["longitude"]
         )

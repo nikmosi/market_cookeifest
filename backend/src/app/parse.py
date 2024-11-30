@@ -1,9 +1,10 @@
-import requests
 import json
-import time
-from datetime import datetime
 import os
 import threading
+import time
+from datetime import datetime
+
+import requests
 
 
 def setValueInList(l, i, v):
@@ -171,7 +172,10 @@ def getFormatedProductsByQuery(
 
 
 def getProductsArticlesByQuery(query: str, max_count: int = 1000):
-    products_data = getProductsByQuery_json(query)["data"]["products"][:max_count]
+    ans = getProductsByQuery_json(query)
+    print(f"{ans=}")
+    print(f"{query=}")
+    products_data = ans["data"]["products"][:max_count]
     return [product["id"] for product in products_data]
 
 

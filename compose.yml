@@ -19,6 +19,7 @@ services:
             - capabilities: [gpu]
   web:
     build: ./nginx
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
@@ -52,7 +53,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - OLLAMA_HOST=http://37.192.128.147:11434/
+      - OLLAMA_HOST=ollama:11434
       - OLLAMA_MODEL=llama3.1
     networks:
       - redis-network
