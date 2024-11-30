@@ -1,6 +1,9 @@
 # market_cookeifest
+
 # TODO
+
 из app.domain.products.services реализовать
+
 - [ ] calculate_delivery_date
 - [ ] calculate_price
 - [ ] calculate_rating
@@ -9,7 +12,6 @@
 - [ ] sort_products_by_ollama
 - [ ] generate_optimal_query
 - [ ] migrate from sync requests to async aiohttp/httpx
-
 
 # Backend API Documentation
 
@@ -75,4 +77,28 @@ GET /api/products/12345/similar
 
 ```javascript
 [54321, 67890, 98765];
+```
+
+# Установка
+
+## Запустите контейнер:
+
+Выполните следующую команду для сборки и запуска контейнеров в фоновом режиме:
+
+```bash
+docker-compose up -d
+```
+
+## Подключитесь к контейнеру
+
+Для доступа к контейнеру выполните:
+
+```bash
+docker exec -it ollama bash
+```
+
+## Установите модель Llama 3.1:
+
+```bash
+ollama run llama3.1
 ```
