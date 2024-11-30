@@ -65,15 +65,30 @@ const SecondProductSearch = () => {
   );
 
   const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
+    { value: "price", label: "По цене" },
+    { value: "delivery", label: "По дате" },
+    { value: "rating", label: "по рейтингу" },
+    { value: "reviews_count", label: "по отзывам" },
   ];
+
+  const handleSortChange = (selectedOption) => {
+    const sortedProducts = [...currentProduct].sort((a, b) => {
+      if (selectedOption.value === "delivery") {
+        // Sort by date
+        return new Date(a.delivery) - new Date(b.delivery);
+      } else {
+        // Sort by numeric value
+        return a[selectedOption.value] - b[selectedOption.value];
+      }
+    });
+
+    setCurrentProduct(sortedProducts);
+  };
 
   const buttonSort = (
     <div className={styles.buttonSortConteiner}>
       <span className={styles.buttonSortSpan}>Сортировка</span>
-      <Select options={options} defaultValue={null} />
+      <Select className={styles.Select} options={options} defaultValue={null} onChange={handleSortChange} />
     </div>
   );
 
@@ -100,7 +115,7 @@ const SecondProductSearch = () => {
           <span className={styles.analog}>Аналогичные товары</span>
           {loadingStatus ? <ClipLoader size={60} color={"#86C232"} /> : buttonSort}
         </div>
-        {currentProduct && currentProduct.length > 0 ? grid : <p>Поиск...</p>}
+        {currentProduct && currentProduct.length > 0 ? grid : ""}
       </section>
     </main>
   );

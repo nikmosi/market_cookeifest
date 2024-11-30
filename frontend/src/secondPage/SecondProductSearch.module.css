@@ -120,37 +120,57 @@ button:hover {
 }
 
 .buttonSortConteiner {
-  display: flex; /* Для размещения элементов по горизонтали */
-  align-items: center; /* Выравнивание по вертикали */
-  justify-content: space-between; /* Расстояние между элементами */
-  padding: 10px 20px; /* Внутренние отступы для контейнера */
-  background-color: #f5f5f5; /* Цвет фона */
-  border-radius: 8px; /* Скругление углов */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень */
-  width: 200px; /* Ширина контейнера */
-  margin: 10px 0; /* Отступы сверху и снизу */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5f5f5;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .buttonSortSpan {
-  font-size: 16px; /* Размер шрифта для текста */
-  font-weight: 600; /* Полужирный шрифт */
-  color: #333; /* Цвет текста */
-  margin-right: 10px; /* Отступ справа для отделения от Select */
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-right: 10px;
 }
 
 .Select {
-  width: 200px; /* Ширина селектора */
-  font-size: 14px; /* Размер шрифта */
-  border: 1px solid #ccc; /* Граница вокруг селектора */
-  border-radius: 4px; /* Скругленные углы */
-  padding: 5px 10px; /* Внутренние отступы */
-  background-color: white; /* Белый фон для поля */
-  cursor: pointer; /* Курсор в виде руки при наведении */
-  transition: border 0.3s ease; /* Плавный переход для изменения границы */
+  width: 200px; /* Ширина Select */
 }
 
-/* Эффект при фокусировке на поле select */
-.Select:focus {
-  border-color: #007bff; /* Синий цвет границы при фокусе */
-  outline: none; /* Убираем стандартное обведение */
+.Select__control {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: white;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.Select__control--is-focused {
+  border-color: #007bff; /* Цвет рамки при фокусе */
+  box-shadow: 0 0 0 1px #007bff;
+}
+
+.Select__menu {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.Select__option {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.Select__option--is-focused {
+  background-color: #e0e0e0;
+}
+
+.Select__option--is-selected {
+  background-color: #007bff;
+  color: white;
 }
