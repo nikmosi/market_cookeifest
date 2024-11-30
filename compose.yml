@@ -11,12 +11,32 @@ services:
     restart: always
     networks:
       - app-network
-
+      - backbone
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
+  web:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf.d:/etc/nginx/conf.d/
+    networks:
+      - backbone
+  app:
+    build: ./backend
+    context: ./backend
+    restart: unless-stopped
+    container_name: app
+    hostname: app
+    ports:
+      - "8000:8000"
+    networks:
+      - backbone
 
 networks:
   app-network:
+  backbone:
+    driver: bridge
