@@ -1,0 +1,71 @@
+.productCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font: 1.5em Inter, sans-serif;
+  }
+  
+  .imageContainer {
+    background-color: rgb(71, 75, 79);
+    width: 25vw;
+    aspect-ratio: 1;
+    margin-top: 2vh;
+  }
+  
+  .productTitle {
+    color: rgb(0, 0, 0);
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    margin-top: 2vh;
+  }
+  
+  .productDescription {
+    color: rgb(88, 88, 88);
+    font-weight: 400;
+    font-size: 1em;
+    margin-top: 2vh;
+  }
+  
+  .productDetails {
+    margin-top: 2vh;
+    padding-left: 2vw;
+    width: 100%;
+    text-align: left;
+  }
+  
+  .priceDelivery {
+    color: rgb(0, 0, 0);
+    font: 500 1em Inter, sans-serif;
+  }
+  
+  .actionButton {
+    background-color: rgb(134, 194, 50);
+    margin-top: 3vh;
+    padding: 1.5vh 2vw;
+    color: rgb(34, 38, 41);
+    text-align: center;
+    letter-spacing: 4px;
+    font: 400 1.5em Sansation, sans-serif;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  @media (max-width: 991px) {
+    .productDescription {
+      margin-top: 40px;
+    }
+  
+    .imageContainer{
+      width: 40vw;
+    }
+
+    .productDetails {
+      margin-top: 40px;
+    }
+  
+    .actionButton {
+      padding: 15px 20px;
+    }
+  }
