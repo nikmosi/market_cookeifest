@@ -128,26 +128,24 @@ def getProductData(article: str, latitude: str, longitude: str):
     product_delivery_hours = getProductDelivery(article, nearest_dest)["data"][
         "products"
     ][0]["time2"]
-    return [
-        {
-            "id": article,
-            "name": product_data["imt_name"],
-            "description": product_data["description"],
-            "price": float(product_in_search["sizes"][0]["price"]["total"] / 100),
-            "delivery": datetime.fromtimestamp(
-                time.time() + product_delivery_hours * 60 * 60
-            ).strftime("%d.%m.%Y"),
-            "rating": float(product_in_search["reviewRating"]),
-            "reviews_count": int(product_in_search["feedbacks"]),
-            "options": dict(
-                [
-                    [option["name"], option["value"]]
-                    for option in product_data["options"]
-                ]
-            ),
-        },
-        {"images": [data[3]]},
-    ]
+    return [{
+        "id": article,
+        "name": product_data["imt_name"],
+        "description": product_data["description"],
+        "price": float(product_in_search["sizes"][0]["price"]["total"] / 100),
+        "delivery": datetime.fromtimestamp(
+            time.time() + product_delivery_hours * 60 * 60
+        ).strftime("%d.%m.%Y"),
+        "rating": float(product_in_search["reviewRating"]),
+        "reviews_count": int(product_in_search["feedbacks"]),
+        "options": dict(
+            [
+                [option["name"], option["value"]]
+                for option in product_data["options"]
+            ]
+        ),
+        "images": [data[3]]
+    }]
 
 
 def getFormatedProductsByQuery(
