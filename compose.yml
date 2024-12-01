@@ -18,7 +18,9 @@ services:
           devices:
             - capabilities: [gpu]
   web:
-    build: ./nginx
+    build:
+      context: .
+      dockerfile: ./nginx/dockerfile
     restart: unless-stopped
     ports:
       - "80:80"
