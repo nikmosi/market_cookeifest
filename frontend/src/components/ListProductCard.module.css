@@ -1,0 +1,98 @@
+.productCard {
+  /* border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      background-color: #fff;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 50%;
+      gap: 10vw; */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  /* max-width: 300px; */
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+.imageContainer {
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+}
+
+.productImage {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.placeholderImage {
+  color: #aaa;
+  font-size: 14px;
+  text-align: center;
+}
+
+.productTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 12px 0;
+}
+
+.productDescription {
+  font-size: 14px;
+  color: #555;
+}
+
+.productDetails {
+  margin-top: 16px;
+}
+
+.priceDelivery {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ratingReviews {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.actionButton {
+  background-color: rgb(134, 194, 50);
+  padding: 1vh 4vw;
+  letter-spacing: 3px;
+  border-radius: 0;
+  cursor: pointer;
+  border-radius: 7px;
+  color: rgb(34, 38, 41);
+}
+
+.actionButton:hover {
+  background-color: #0056b3;
+}
+
+.buttons {
+  margin-top: auto;
+  display: flex; /* Используем flexbox для расположения элементов */
+  justify-content: space-between; /* Кнопки будут находиться по краям контейнера */
+  align-items: center; /* Выравниваем кнопки по вертикали */
+  width: 100%; /* Устанавливаем ширину контейнера */
+  gap: 20px;
+}
+
+.searchButton {
+  background-color: rgb(134, 194, 50);
+  padding: 1vh 4vw;
+  letter-spacing: 3px;
+  border-radius: 0;
+  cursor: pointer;
+  border-radius: 7px;
+  color: rgb(34, 38, 41);
+}

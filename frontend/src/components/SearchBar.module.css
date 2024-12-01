@@ -23,7 +23,7 @@
     background-color: rgb(134, 194, 50);
     padding: 1vh 4vw;
     letter-spacing: 3px;
-    border: none;
+    border-radius: 0;
     cursor: pointer;
     color: rgb(34, 38, 41);
   }

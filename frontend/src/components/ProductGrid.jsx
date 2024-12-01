@@ -23,7 +23,7 @@ const products = [
 	},
 ];
 
-export const ProductGrid = () => {
+const ProductGrid = () => {
 	return (
 		<div className={styles.productGrid}>
 			{products.map((product, index) => (
@@ -32,3 +32,5 @@ export const ProductGrid = () => {
 		</div>
 	);
 };
+
+export default ProductGrid;
