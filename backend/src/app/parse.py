@@ -113,7 +113,7 @@ def getProductData(article: str, latitude: str, longitude: str):
     data = multithreadExec(
         [
             [getProductDataByArticle, [article]],
-            [getProductsByQuery_json, ["товар " + article]],
+            [getProductsByQuery_json, ["артикул " + article]],
             [getGeoData, [latitude, longitude]],
             [findTitleImageUrlByArticle, [article]],
         ]
