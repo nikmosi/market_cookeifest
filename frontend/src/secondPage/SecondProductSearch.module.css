@@ -8,6 +8,7 @@
   overflow: hidden;
   max-width: 100vw;
   position: relative;
+  min-height: 89vh;
 }
 
 /* Шапка страницы (кнопка и заголовок) */
@@ -98,9 +99,17 @@ button:hover {
   .container {
     padding: 0 20px;
   }
-
+  .pageTitle{
+    margin-top: 10vh;
+  }
+  .productCardContainer{
+    margin-top: 20vh;
+  }
   .productsSection {
     width: 70vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .title {
@@ -112,6 +121,11 @@ button:hover {
     margin-top: 40px;
     padding: 0 20px;
     max-width: 100%;
+  }
+  .sort{
+    display: flex;
+    flex-direction: column;
+    padding: 2vh;
   }
 }
 

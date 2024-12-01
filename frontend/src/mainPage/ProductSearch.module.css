@@ -6,6 +6,7 @@
   padding: 3vw;
   overflow: hidden;
   max-width: 100vw;
+  min-height: 88vh;
 }
 
 .title {
@@ -36,6 +37,12 @@
   /* margin-top: 10px; */
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+@media (max-width: 991px) {
+  .productGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 }
 
 @media (max-width: 991px) {
