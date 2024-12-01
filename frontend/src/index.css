@@ -70,13 +70,13 @@ button:focus-visible {
 
 @font-face {
   font-family: "Stalinist One";
-  src: url(public/StalinistOne-Regular.ttf);
+  src: url('../public/StalinistOne-Regular.ttf');
 }
 @font-face {
   font-family: "Sansation";
-  src: url(public/Sansation/Sansation-Regular.ttf);
+  src: url('../public/Sansation/Sansation-Regular.ttf');
 }
 @font-face {
   font-family: "Sansation-lite";
-  src: url(public/Sansation/Sansation-Light.ttf);
+  src: url('../public/Sansation/Sansation-Light.ttf');
 }
