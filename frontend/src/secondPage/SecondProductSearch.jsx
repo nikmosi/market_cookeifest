@@ -74,10 +74,13 @@ const SecondProductSearch = () => {
   const handleSortChange = (selectedOption) => {
     const sortedProducts = [...currentProduct].sort((a, b) => {
       if (selectedOption.value === "delivery") {
-        // Sort by date
+        // Сортировка по дате доставки (по возрастанию)
         return new Date(a.delivery) - new Date(b.delivery);
+      } else if (selectedOption.value === "rating" || selectedOption.value === "reviews_count") {
+        // Сортировка по рейтингу или количеству отзывов (по убыванию)
+        return b[selectedOption.value] - a[selectedOption.value];
       } else {
-        // Sort by numeric value
+        // Сортировка по цене (по возрастанию)
         return a[selectedOption.value] - b[selectedOption.value];
       }
     });
