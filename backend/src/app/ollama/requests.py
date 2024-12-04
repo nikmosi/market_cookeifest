@@ -1,11 +1,9 @@
-import os
-
 from loguru import logger
+
+from app.data import config
 
 from .connection import client
 from .promt import search_query_prompt
-
-model = os.getenv("OLLAMA_MODEL", "llama3.1")
 
 
 async def product_validation(productInfo):
@@ -17,9 +15,8 @@ async def product_validation(productInfo):
 Опции: {', '.join([f"{key}: {value}" for key, value in item['options'].items()])}
 """
     logger.debug(f"{result=}")
-    logger.debug(model)
     response = await client.chat(
-        model=model,
+        model=config.ollama.model,
         messages=[
             {"role": "system", "content": search_query_prompt},
             {"role": "user", "content": result},

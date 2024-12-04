@@ -1,8 +1,5 @@
-import os
-
 from ollama import AsyncClient
 
-host = os.getenv("OLLAMA_HOST")
+from app.data import config
 
-client = AsyncClient(host=host, headers={"x-some-header": "some-value"})
-print(host)
+client = AsyncClient(host=config.ollama.host)
