@@ -1,23 +1,24 @@
-import json
 import os
 
+from loguru import logger
+
 from .connection import client
-from .promt import product_validation_prompt, search_query_prompt
+from .promt import search_query_prompt
 
 model = os.getenv("OLLAMA_MODEL", "llama3.1")
 
 
-def product_validation(productInfo):
+async def product_validation(productInfo):
     item = productInfo[0]
-    print(f"{item}")
+    logger.debug(f"{item}")
     result = f"""
 Название: {item['name']}
 Описание: {item['description']}
 Опции: {', '.join([f"{key}: {value}" for key, value in item['options'].items()])}
 """
-    print(f"{result=}")
-    print(model)
-    response = client.chat(
+    logger.debug(f"{result=}")
+    logger.debug(model)
+    response = await client.chat(
         model=model,
         messages=[
             {"role": "system", "content": search_query_prompt},
@@ -25,22 +26,5 @@ def product_validation(productInfo):
         ],
     )
 
-    print(response["message"]["content"])
-    return response["message"]["content"]
-
-
-def search_alternative(productInfo, alternativeProductInfo):
-    response = client.chat(
-        model=model,
-        messages=[
-            {
-                "role": "system",
-                "content": product_validation_prompt(productInfo),
-            },
-            {
-                "role": "user",
-                "content": alternativeProductInfo,
-            },
-        ],
-    )
+    logger.debug(response["message"]["content"])
     return response["message"]["content"]
