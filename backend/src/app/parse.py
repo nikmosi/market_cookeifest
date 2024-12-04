@@ -6,7 +6,7 @@ import httpx
 from loguru import logger
 
 
-async def getGeoData(latitude: str, longitude: str):
+async def get_geo_data(latitude: str, longitude: str):
     logger.debug(latitude)
     logger.debug(longitude)
     async with httpx.AsyncClient() as client:
@@ -17,7 +17,7 @@ async def getGeoData(latitude: str, longitude: str):
     return response.json()
 
 
-async def getProductDelivery(article: str, dest: str):
+async def get_product_delivery(article: str, dest: str):
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest={dest}&spp=30&ab_testing=false&nm={article}"
@@ -25,7 +25,7 @@ async def getProductDelivery(article: str, dest: str):
     return response.json()
 
 
-async def getProductDataByArticle(article: str):
+async def get_product_data_by_article(article: str):
     length = len(article)
     full_article = "0" * (9 - length) + article
 
@@ -38,7 +38,7 @@ async def getProductDataByArticle(article: str):
     return None
 
 
-async def findTitleImageUrlByArticle(article: str):
+async def find_title_image_url_by_article(article: str):
     length = len(article)
     full_article = "0" * (9 - length) + article
 
@@ -51,7 +51,7 @@ async def findTitleImageUrlByArticle(article: str):
     return None
 
 
-async def getProductsByQuery_json(query: str):
+async def get_products_by_query_json(query: str):
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"https://search.wb.ru/exactmatch/ru/common/v7/search?ab_testing=false&appType=1&curr=rub&dest=-366541&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false"
@@ -59,11 +59,11 @@ async def getProductsByQuery_json(query: str):
     return response.json()
 
 
-async def getProductData(article: str, latitude: str, longitude: str):
-    product_data = await getProductDataByArticle(article)
-    search_data = await getProductsByQuery_json("артикул " + article)
-    geo_data = await getGeoData(latitude, longitude)
-    title_image_url = await findTitleImageUrlByArticle(article)
+async def get_product_data(article: str, latitude: str, longitude: str):
+    product_data = await get_product_data_by_article(article)
+    search_data = await get_products_by_query_json("артикул " + article)
+    geo_data = await get_geo_data(latitude, longitude)
+    title_image_url = await find_title_image_url_by_article(article)
 
     if not product_data or not search_data or not geo_data or not title_image_url:
         return None
@@ -73,7 +73,7 @@ async def getProductData(article: str, latitude: str, longitude: str):
     dest_i = geo_data["xinfo"].find("dest=") + 5
     nearest_dest = geo_data["xinfo"][dest_i : geo_data["xinfo"].find("&", dest_i)]
 
-    product_delivery = await getProductDelivery(article, nearest_dest)
+    product_delivery = await get_product_delivery(article, nearest_dest)
     product_delivery_hours = product_delivery["data"]["products"][0]["time2"]
 
     return {
@@ -93,22 +93,22 @@ async def getProductData(article: str, latitude: str, longitude: str):
     }
 
 
-async def getFormatedProductsByQuery(
+async def get_formated_products_by_query(
     query: str, latitude: str, longitude: str, max_count: int
 ):
-    products_data = (await getProductsByQuery_json(query))["data"]["products"][
+    products_data = (await get_products_by_query_json(query))["data"]["products"][
         :max_count
     ]
     tasks = [
-        getProductData(str(product["id"]), latitude, longitude)
+        get_product_data(str(product["id"]), latitude, longitude)
         for product in products_data
     ]
     products = await asyncio.gather(*tasks)
     return [product for product in products if product]
 
 
-async def getProductsArticlesByQuery(query: str, max_count: int = 1000):
-    ans = await getProductsByQuery_json(query)
+async def get_products_articles_by_query(query: str, max_count: int = 1000):
+    ans = await get_products_by_query_json(query)
     logger.debug(f"{ans=}")
     logger.debug(f"{query=}")
     products_data = ans["data"]["products"][:max_count]

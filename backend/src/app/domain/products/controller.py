@@ -9,7 +9,7 @@ from app.domain.products.schemas import SimilarProducts
 from app.domain.products.services import (
     generate_optimal_query,
 )
-from app.parse import getProductData, getProductsArticlesByQuery
+from app.parse import get_product_data, get_products_articles_by_query
 
 
 class ProductsController(Controller):
@@ -50,7 +50,7 @@ class ProductsController(Controller):
         ip = await self.get_ip(request)
         geo = await self.get_ll(ip)
 
-        product = await getProductData(
+        product = await get_product_data(
             product_article, geo["latitude"], geo["longitude"]
         )
         logger.debug(f"{product=}")
@@ -61,9 +61,9 @@ class ProductsController(Controller):
     async def get_similar_products(self, request: Request, product_article: str) -> Any:
         ip = await self.get_ip(request)
         geo = await self.get_ll(ip)
-        product = await getProductData(
+        product = await get_product_data(
             product_article, geo["latitude"], geo["longitude"]
         )
         query = await generate_optimal_query(product)
-        articles = await getProductsArticlesByQuery(query, max_count=20)
+        articles = await get_products_articles_by_query(query, max_count=20)
         return SimilarProducts(articles=articles)
