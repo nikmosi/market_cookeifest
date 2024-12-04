@@ -6,15 +6,16 @@ import httpx
 from loguru import logger
 
 
-async def get_geo_data(latitude: str, longitude: str):
+async def get_geo_data(latitude: float, longitude: float):
     logger.debug(latitude)
     logger.debug(longitude)
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&latitude={latitude}&longitude={longitude}&locale=ru"
         )
-    logger.debug(response.text)
-    return response.json()
+    json = response.json()
+    logger.debug(f"geo_data: {json=}")
+    return json
 
 
 async def get_product_delivery(article: str, dest: str):
@@ -22,7 +23,9 @@ async def get_product_delivery(article: str, dest: str):
         response = await client.get(
             f"https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest={dest}&spp=30&ab_testing=false&nm={article}"
         )
-    return response.json()
+    json = response.json()
+    logger.debug(f"delivety: {json=}")
+    return json
 
 
 async def helper_basket(article: str, postfix: str):
@@ -33,7 +36,7 @@ async def helper_basket(article: str, postfix: str):
         reqs = []
         logger.warning("new basket")
         for i in range(1, 21):
-            url = f"https://basket-{('0' + str(i)) if i < 10 else str(i)}.wbbasket.ru/vol{str(int(full_article[:4]))}/part{str(int(full_article[:6]))}/{article}/{postfix}"
+            url = f"https://basket-{i:02}.wbbasket.ru/vol{full_article[:4]}/part{full_article[:6]}/{article}/{postfix}"
             reqs.append(asyncio.create_task(client.get(url)))
         done, pending = await asyncio.wait(reqs, return_when=asyncio.FIRST_COMPLETED)
         while pending:
@@ -64,10 +67,12 @@ async def get_products_by_query_json(query: str):
         response = await client.get(
             f"https://search.wb.ru/exactmatch/ru/common/v7/search?ab_testing=false&appType=1&curr=rub&dest=-366541&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false"
         )
-    return response.json()
+    json = response.json()
+    logger.debug(f"get_products_by_query_json: {json=}")
+    return json
 
 
-async def get_product_data(article: str, latitude: str, longitude: str):
+async def get_product_data(article: str, latitude: float, longitude: float):
     product_data = await get_product_data_by_article(article)
     search_data = await get_products_by_query_json("артикул " + article)
     geo_data = await get_geo_data(latitude, longitude)
@@ -99,20 +104,6 @@ async def get_product_data(article: str, latitude: str, longitude: str):
         ),
         "images": [title_image_url],
     }
-
-
-async def get_formated_products_by_query(
-    query: str, latitude: str, longitude: str, max_count: int
-):
-    products_data = (await get_products_by_query_json(query))["data"]["products"][
-        :max_count
-    ]
-    tasks = [
-        get_product_data(str(product["id"]), latitude, longitude)
-        for product in products_data
-    ]
-    products = await asyncio.gather(*tasks)
-    return [product for product in products if product]
 
 
 async def get_products_articles_by_query(query: str, max_count: int = 1000):

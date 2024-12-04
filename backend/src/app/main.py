@@ -1,6 +1,10 @@
+from collections.abc import AsyncGenerator
+
+import httpx
 from litestar import Litestar, get
 from litestar.config.cors import CORSConfig
 from litestar.config.response_cache import ResponseCacheConfig
+from litestar.di import Provide
 from litestar.stores.redis import RedisStore
 from redis.asyncio import ConnectionPool, Redis
 
@@ -11,6 +15,11 @@ from app.routes import route_handlers
 @get("/health", tags=["inside"])
 async def index() -> str:
     return "Hello, world!"
+
+
+async def provide_client() -> AsyncGenerator[httpx.AsyncClient]:
+    async with httpx.AsyncClient() as client:
+        yield client
 
 
 def create_app() -> Litestar:
@@ -24,6 +33,7 @@ def create_app() -> Litestar:
         stores={"redis_backed_store": redis_store},
         response_cache_config=cache_config,
         cors_config=cors_config,
+        dependencies={"client": Provide(provide_client)},
     )
 
 
