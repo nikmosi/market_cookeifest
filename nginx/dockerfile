@@ -1,4 +1,4 @@
-FROM node:20 as build-stage
+FROM node:20 AS build_stage
 WORKDIR /app
 COPY ./frontend .
 RUN npm install
@@ -8,7 +8,7 @@ RUN npm run build
 FROM nginx:alpine3.20
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
-COPY --from=build-stage /app/dist .
+COPY --from=build_stage /app/dist .
 RUN chown -R nginx:nginx .
 EXPOSE 80
 EXPOSE 443

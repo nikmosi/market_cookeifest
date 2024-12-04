@@ -43,7 +43,7 @@ class ProductsController(Controller):
             ip = "127.0.0.1"
         return ip
 
-    @get(path=urls.PRODUCT_ID, name="product:get_by_article", cache=360)
+    @get(path=urls.PRODUCT_ID, name="product:get_by_article", cache=False)
     async def get_product_by_article(
         self, product_article: str, request: Request
     ) -> Any:

@@ -25,30 +25,38 @@ async def get_product_delivery(article: str, dest: str):
     return response.json()
 
 
-async def get_product_data_by_article(article: str):
+async def helper_basket(article: str, postfix: str):
     length = len(article)
     full_article = "0" * (9 - length) + article
 
     async with httpx.AsyncClient() as client:
+        reqs = []
+        logger.warning("new basket")
         for i in range(1, 21):
-            url = f"https://basket-{('0' + str(i)) if i < 10 else str(i)}.wbbasket.ru/vol{str(int(full_article[:4]))}/part{str(int(full_article[:6]))}/{article}/info/ru/card.json"
-            response = await client.get(url)
-            if response.status_code == 200:
-                return response.json()
+            url = f"https://basket-{('0' + str(i)) if i < 10 else str(i)}.wbbasket.ru/vol{str(int(full_article[:4]))}/part{str(int(full_article[:6]))}/{article}/{postfix}"
+            reqs.append(asyncio.create_task(client.get(url)))
+        done, pending = await asyncio.wait(reqs, return_when=asyncio.FIRST_COMPLETED)
+        while pending:
+            done, pending = await asyncio.wait(
+                reqs, return_when=asyncio.FIRST_COMPLETED
+            )
+            for req in done:
+                response = await req
+                if response.status_code == 200:
+                    for i in pending:
+                        i.cancel()
+                    return response
     return None
+
+
+async def get_product_data_by_article(article: str):
+    res = await helper_basket(article, "info/ru/card.json")
+    return res.json()
 
 
 async def find_title_image_url_by_article(article: str):
-    length = len(article)
-    full_article = "0" * (9 - length) + article
-
-    async with httpx.AsyncClient() as client:
-        for i in range(1, 21):
-            url = f"https://basket-{('0' + str(i)) if i < 10 else str(i)}.wbbasket.ru/vol{str(int(full_article[:4]))}/part{str(int(full_article[:6]))}/{article}/images/big/1.webp"
-            response = await client.get(url)
-            if response.status_code == 200:
-                return str(response.url)
-    return None
+    res = await helper_basket(article, "images/big/1.webp")
+    return str(res.url)
 
 
 async def get_products_by_query_json(query: str):
