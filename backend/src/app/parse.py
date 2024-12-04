@@ -5,50 +5,52 @@ from datetime import datetime
 import httpx
 from loguru import logger
 
+from app.db.models.geo import Geo
+from app.db.models.wb import WbDelivery, WbGeo
 
-async def get_geo_data(latitude: float, longitude: float):
-    logger.debug(latitude)
-    logger.debug(longitude)
+
+async def get_geo_data(geo: Geo) -> WbGeo:
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            f"https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&latitude={latitude}&longitude={longitude}&locale=ru"
+            f"https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&latitude={geo.latitude}&longitude={geo.longitude}&locale=ru"
         )
-    json = response.json()
-    logger.debug(f"geo_data: {json=}")
-    return json
+    return WbGeo.model_validate_json(response.text)
 
 
-async def get_product_delivery(article: str, dest: str):
+async def get_product_delivery(article: str, dest: str) -> WbDelivery:
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest={dest}&spp=30&ab_testing=false&nm={article}"
         )
-    json = response.json()
-    logger.debug(f"delivety: {json=}")
-    return json
+    logger.debug(f"delivery: {response.text=}")
+    return WbDelivery.model_validate_json(response.text)
 
 
-async def helper_basket(article: str, postfix: str):
-    length = len(article)
-    full_article = "0" * (9 - length) + article
+async def generate_urls(article: str, postfix: str) -> list[str]:
+    full_article = article.rjust(9, "0")
+    return [
+        f"https://basket-{i:02}.wbbasket.ru/vol{full_article[:4]}/part{full_article[:6]}/{article}/{postfix}"
+        for i in range(1, 21)
+    ]
 
-    async with httpx.AsyncClient() as client:
-        reqs = []
-        logger.warning("new basket")
-        for i in range(1, 21):
-            url = f"https://basket-{i:02}.wbbasket.ru/vol{full_article[:4]}/part{full_article[:6]}/{article}/{postfix}"
-            reqs.append(asyncio.create_task(client.get(url)))
-        done, pending = await asyncio.wait(reqs, return_when=asyncio.FIRST_COMPLETED)
-        while pending:
-            done, pending = await asyncio.wait(
-                reqs, return_when=asyncio.FIRST_COMPLETED
-            )
-            for req in done:
-                response = await req
+
+async def helper_basket(article: str, postfix: str, timeout: float = 10.0):
+    urls = await generate_urls(article, postfix)
+
+    async with httpx.AsyncClient(timeout=httpx.Timeout(timeout)) as client:
+        tasks = [client.get(url) for url in urls]
+        logger.info("Starting basket requests")
+
+        for coro in asyncio.as_completed(tasks):
+            try:
+                response = await coro
                 if response.status_code == 200:
-                    for i in pending:
-                        i.cancel()
+                    logger.info(f"Successful response from {response.url}")
                     return response
+            except httpx.RequestError as e:
+                logger.error(f"Request failed: {e}")
+
+    logger.warning("No successful responses")
     return None
 
 
@@ -72,22 +74,21 @@ async def get_products_by_query_json(query: str):
     return json
 
 
-async def get_product_data(article: str, latitude: float, longitude: float):
+async def get_product_data(article: str, geo: Geo):
     product_data = await get_product_data_by_article(article)
     search_data = await get_products_by_query_json("артикул " + article)
-    geo_data = await get_geo_data(latitude, longitude)
+    geo_data = await get_geo_data(geo)
     title_image_url = await find_title_image_url_by_article(article)
 
-    if not product_data or not search_data or not geo_data or not title_image_url:
+    if not all((product_data, search_data, geo_data, title_image_url)):
         return None
 
     product_in_search = search_data["data"]["products"][0]
 
-    dest_i = geo_data["xinfo"].find("dest=") + 5
-    nearest_dest = geo_data["xinfo"][dest_i : geo_data["xinfo"].find("&", dest_i)]
+    nearest_dest = httpx.URL(geo_data.xinfo).params.get("dest")
 
     product_delivery = await get_product_delivery(article, nearest_dest)
-    product_delivery_hours = product_delivery["data"]["products"][0]["time2"]
+    product_delivery_hours = product_delivery.data.products[0].time2
 
     return {
         "id": article,

@@ -32,7 +32,7 @@ class ProductsController(Controller):
         self, ip: str, geo_service: GeoService, product_article: str
     ) -> Any:
         geo = await geo_service.get_geo(ip)
-        product = await get_product_data(product_article, geo.latitude, geo.longitude)
+        product = await get_product_data(product_article, geo)
         logger.debug(f"{product=}")
         return product
 
@@ -41,7 +41,7 @@ class ProductsController(Controller):
         self, ip: str, geo_service: GeoService, product_article: str
     ) -> Any:
         geo = await geo_service.get_geo(ip)
-        product = await get_product_data(product_article, geo.latitude, geo.longitude)
+        product = await get_product_data(product_article, geo)
         query = await generate_optimal_query(product)
         articles = await get_products_articles_by_query(query, max_count=20)
         return SimilarProducts(articles=articles)
