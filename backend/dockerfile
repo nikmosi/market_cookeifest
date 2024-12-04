@@ -1,4 +1,9 @@
 FROM python:3.12-slim-bookworm
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+    
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Copy the project into the image
@@ -9,4 +14,4 @@ WORKDIR /app
 ENV PYTHONPATH "/app/src"
 RUN uv sync --frozen
 ADD src /app/src
-CMD uv run litestar --app app.main:app run --debug --host "0.0.0.0"
+CMD uv run litestar --app app.main:app run --debug --reload --host "0.0.0.0"

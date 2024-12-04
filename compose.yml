@@ -8,7 +8,7 @@ services:
       OLLAMA_KEEP_ALIVE: -1
     volumes:
       - ollama:/root/.ollama
-    restart: always
+    restart: unless-stopped
     networks:
       - app-network
       - backbone
@@ -17,6 +17,7 @@ services:
         reservations:
           devices:
             - capabilities: [gpu]
+
   web:
     build:
       context: .
@@ -28,10 +29,19 @@ services:
       - ./nginx.conf.d:/etc/nginx/conf.d/
     networks:
       - backbone
+    depends_on:
+      app:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./nginx.conf.d/
+          target: /etc/nginx/conf.d/
+
   redis:
     image: redis:latest
     container_name: llm_redis
-    restart: always
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
@@ -47,6 +57,7 @@ services:
       - REDIS_DATABASES=0
     networks:
       - redis-network
+
   app:
     build: ./backend
     restart: unless-stopped
@@ -63,6 +74,25 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src/app
+          target: /app/src/app
+          ignore:
+            - __pycache__/
+            - "*.pyc"
+            - logs/
+        - action: rebuild
+          path: ./backend/pyproject.toml
+        - action: sync+restart
+          path: ./backend/src/app/data/config.py
+          target: /app/src/app/data/config.py
 
 volumes:
   redis_data:
