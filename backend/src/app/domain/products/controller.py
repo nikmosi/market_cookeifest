@@ -27,7 +27,7 @@ class ProductsController(Controller):
     async def get_ip(self, ip: str) -> Any:
         return {"ip": ip}
 
-    @get(path=urls.PRODUCT_ID, name="product:get_by_article", cache=False)
+    @get(path=urls.PRODUCT_ID, name="product:get_by_article", cache=360)
     async def get_product_by_article(
         self, ip: str, geo_service: GeoService, product_article: str
     ) -> Any:

@@ -1,37 +1,22 @@
 import asyncio
 import time
+from asyncio import TaskGroup
 from datetime import datetime
 
 import httpx
 from loguru import logger
 
-from app.alib.exceptions import BasketError, RetryError
+from app.alib.exceptions import BasketError
 from app.db.models.geo import Geo
 from app.db.models.wb import ProductData, WbArticle, WbDelivery, WbGeo, WbProduct
+from app.utils.http import fetch_url
 
 BASE_URLS = {
     "geo": "https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&latitude={latitude}&longitude={longitude}&locale=ru",
     "product_delivery": "https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest={dest}&spp=30&ab_testing=false&nm={article}",
-    "basket": "https://basket-{i:02}.wbbasket.ru/vol{full_article[:4]}/part{full_article[:6]}/{article}/{postfix}",
+    "basket": "https://basket-{i:02}.wbbasket.ru/vol{full_article_1}/part{full_article_2}/{article}/{postfix}",
     "search": "https://search.wb.ru/exactmatch/ru/common/v7/search?ab_testing=false&appType=1&curr=rub&dest=-366541&query={query}&resultset=catalog&sort=popular&spp=30&suppressSpellcheck=false",
 }
-
-
-async def fetch_url(
-    client: httpx.AsyncClient, url: str, retries: int = 3, timeout: float = 10.0
-) -> httpx.Response:
-    for attempt in range(retries):
-        try:
-            response = await client.get(url, timeout=timeout)
-            response.raise_for_status()
-            return response
-        except httpx.RequestError as e:
-            logger.error(f"Request failed: {e}, attempt {attempt + 1}")
-            if attempt == retries - 1:
-                logger.error(f"Max retries reached for {url}")
-                raise RetryError(url, retries) from None
-            await asyncio.sleep(1)
-    raise RetryError(url, retries) from None
 
 
 async def get_geo_data(geo: Geo) -> WbGeo:
@@ -50,9 +35,14 @@ async def get_product_delivery(article: str, dest: str) -> WbDelivery:
 
 async def generate_urls(article: str, postfix: str) -> list[str]:
     full_article = article.rjust(9, "0")
+    logger.debug(BASE_URLS)
     return [
         BASE_URLS["basket"].format(
-            i=i, full_article=full_article, article=article, postfix=postfix
+            i=i,
+            full_article_1=full_article[:4].lstrip("0"),
+            full_article_2=full_article[:6].lstrip("0"),
+            article=article,
+            postfix=postfix,
         )
         for i in range(1, 21)
     ]
@@ -104,29 +94,35 @@ async def get_products_by_query_json(query: str) -> WbProduct:
 
 
 async def get_product_data(article: str, geo: Geo) -> ProductData | None:
-    product_data = await get_product_data_by_article(article)
-    search_data = await get_products_by_query_json("артикул " + article)
-    geo_data = await get_geo_data(geo)
-    title_image_url = await find_title_image_url_by_article(article)
+    async with TaskGroup() as tg:
+        wb_article = tg.create_task(get_product_data_by_article(article))
+        wb_product = tg.create_task(get_products_by_query_json("артикул " + article))
+        geo_data = tg.create_task(get_geo_data(geo))
+        image_urls = tg.create_task(find_title_image_url_by_article(article))
 
-    if not all((product_data, search_data, geo_data, title_image_url)):
+    wb_article = await wb_article
+    wb_product = await wb_product
+    geo_data = await geo_data
+    image_urls = await image_urls
+
+    if not all((wb_article, wb_product, geo_data, image_urls)):
         return None
 
-    product_in_search = search_data.data.products[0]
+    product_in_search = wb_product.data.products[0]
     url = httpx.URL(f"http://dummy.com/?{geo_data.xinfo}")
     params = url.params
     nearest_dest = params.get("dest")
 
-    product_delivery = await get_product_delivery(article, nearest_dest)
-    if product_delivery is None:
+    wb_delivery = await get_product_delivery(article, nearest_dest)
+    if wb_delivery is None:
         return None
 
-    product_delivery_hours = product_delivery.data.products[0].time2
+    product_delivery_hours = wb_delivery.data.products[0].time2
     return ProductData(
         **{
             "id": article,
-            "name": product_data.imt_name,
-            "description": product_data.description,
+            "name": wb_article.imt_name,
+            "description": wb_article.description,
             "price": float(product_in_search.sizes[0].price.total / 100),
             "delivery": datetime.fromtimestamp(
                 time.time() + product_delivery_hours * 60 * 60
@@ -134,9 +130,9 @@ async def get_product_data(article: str, geo: Geo) -> ProductData | None:
             "rating": float(product_in_search.reviewRating),
             "reviews_count": int(product_in_search.feedbacks),
             "options": dict(
-                [[option.name, option.value] for option in product_data.options]
+                [[option.name, option.value] for option in wb_article.options]
             ),
-            "images": [title_image_url],
+            "images": [image_urls],
         }
     )
 
@@ -147,5 +143,6 @@ async def get_products_articles_by_query(
     ans = await get_products_by_query_json(query)
     if ans:
         products_data = ans.data.products[:max_count]
-        return [product.id for product in products_data]
+        articles = [product.id for product in products_data]
+        return articles
     return []

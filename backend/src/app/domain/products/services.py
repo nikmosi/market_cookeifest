@@ -1,10 +1,9 @@
-from typing import Any
-
 from httpx import AsyncClient
 from loguru import logger
 from pydantic import ValidationError
 
 from app.db.models.geo import Geo
+from app.db.models.wb import ProductData
 from app.ollama.requests import product_validation
 
 
@@ -14,7 +13,7 @@ class GeoService:
 
     async def __get(self, ip: str) -> Geo | None:
         response = await self.client.get(
-            f"https://geolocation-db.com/json/{ip}&position=true"
+            f"https://geolocation-db.com/json/{ip}&position=true", timeout=10.0
         )
         try:
             return Geo.model_validate_json(response.text)
@@ -42,7 +41,6 @@ class GeoService:
         return geo
 
 
-async def generate_optimal_query(article: Any) -> str:
-    logger.debug(article)
-    return article["name"]
+async def generate_optimal_query(article: ProductData) -> str:
+    return article.name
     return await product_validation(article)
